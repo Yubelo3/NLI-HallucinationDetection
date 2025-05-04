@@ -42,6 +42,7 @@ I'll show some examples for generated probability distribution on different prem
 |I am new here|I am not familiar with here|0.0123|0.0123|0.9754|
 |I have a class tonight|I am free tonight|0.8894|0.0390|0.0716|
 |I have a job|I am free tonight|0.5826|0.3283|0.0891|
+|I have an easy job|I am free tonight|0.1873|0.7309|0.0819|
 
 As shown above, the tuned **Flan-T5** is able to generate predictions that are quite close to human intuition.  
 

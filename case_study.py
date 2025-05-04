@@ -22,9 +22,9 @@ def main():
         discriminator.load_state_dict(torch.load(
             DISCRIMINATOR_CKPT, map_location=DEVICE))
 
-    premise = ["I am new here", "I have a class tonight", "I have a job"]
+    premise = ["I am new here", "I have a class tonight", "I have a job","I have an easy job"]
     hypothesis = ["I am not familiar with here",
-                  "I am free tonight", "I am free tonight"]
+                  "I am free tonight", "I am free tonight","I am free tonight"]
     all_prompts = [f"premise: {x}. hypothesis: {y}" for x, y in zip(
         premise, hypothesis)]
     input_ids, attn_mask = encoder.tokenize(all_prompts)
