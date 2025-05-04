@@ -26,7 +26,7 @@ class NLIDataset(Dataset):
         self.n_mismatched_sample = 0
         def load_file(f) -> int:
             n_sample=0
-            label_map = {"contradiction": -1.0, "neutral": 0.0, "entailment": 1.0}
+            label_map = {"contradiction": 0, "neutral": 1, "entailment": 2}
             for line in f:
                 data = json.loads(line)
                 self.sentence1.append(data["sentence1"])
@@ -35,7 +35,7 @@ class NLIDataset(Dataset):
                     self.label.append(label_map[data["gold_label"]])
                 else:
                     annotator_labels=[label_map[x] for x in data["annotator_labels"]]
-                    self.label.append(sum(annotator_labels)/len(annotator_labels))
+                    self.label.append(int(round(sum(annotator_labels)/len(annotator_labels))))
                 n_sample+=1
         with open(filepath_matched, "r", encoding="utf-8") as f:
             self.n_matched_sample=load_file(f)
@@ -65,7 +65,7 @@ class GPT3HallucinationDataset(Dataset):
         self.label=[]
         with open(filepath, "r", encoding="utf-8") as f:
             data_list=json.load(f)
-        label_map={"major_inaccurate":-1.0,"minor_inaccurate":0.0,"accurate":1.0}
+        label_map={"major_inaccurate":0,"minor_inaccurate":1,"accurate":2}
         for data in data_list:
             wiki_text=data["wiki_bio_text"]
             gpt3_sentences=data["gpt3_sentences"]

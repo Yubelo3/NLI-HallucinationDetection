@@ -4,7 +4,7 @@ from encoder import BaseSentenceEncoder, GPT2Encoder, FlanT5Encoder
 from logger import TBWriter
 from torch.utils.data.dataset import Dataset, random_split
 from torch.utils.data.dataloader import DataLoader
-from discriminator import BaseDiscriminator, L2Discriminator
+from discriminator import Discriminator
 from tqdm import tqdm
 
 
@@ -23,7 +23,7 @@ def main():
     logger = TBWriter(type(ENCODER).__name__)
     encoder = ENCODER.to(DEVICE)
     dataset = NLIDataset()
-    discriminator = L2Discriminator()
+    discriminator = Discriminator().to(DEVICE)
     optimizer = torch.optim.Adam(
         encoder.parameters(), lr=LR, weight_decay=1e-4)
     train_size = int(TRAIN_RATIO*len(dataset))
@@ -45,32 +45,34 @@ def main():
         logger.add_scalar("val_loss", val_loss, epoch)
         logger.add_scalar("val_acc", val_acc, epoch)
         if (epoch+1) % SAVE_EVERY == 0:
-            logger.save_ckpt({"encoder": encoder}, epoch+1)
+            logger.save_ckpt(
+                {"encoder": encoder, "discriminator": discriminator}, epoch+1)
 
 
 def train_epoch(
     encoder: BaseSentenceEncoder,
-    discriminator: BaseDiscriminator,
+    discriminator: Discriminator,
     optimizer: torch.optim.Optimizer,
     dataloader: DataLoader,
 ):
     encoder.train()
+    loss_func = torch.nn.CrossEntropyLoss()
     sum_loss, sum_batches, sum_accuracy = 0.0, 0.0, 0.0
-    sum_sim=0.0
     bar = tqdm(dataloader)
     for sentence1, sentence2, label in bar:
         B = label.shape[0]
-        all_sentences = sentence1+sentence2
-        input_ids, attn_mask = encoder.tokenize(all_sentences)
+        all_prompts = [f"premise: {x}. hypothesis: {y}" for x, y in zip(
+            sentence1, sentence2)]
+        input_ids, attn_mask = encoder.tokenize(all_prompts)
         label = label.to(DEVICE)
         input_ids, attn_mask = input_ids.to(DEVICE), attn_mask.to(DEVICE)
         # sentence_emb: [2B x emb_dim]
         word_emb, sentence_emb = encoder(input_ids, attn_mask)
-        sim = discriminator.get_similarity(
-            sentence_emb[:B], sentence_emb[B:])  # [B]
-        sim_loss=(sim.abs().sum()/B-0.666).abs()
-        loss = (sim-label).abs().sum()/B+0.4*sim_loss
-        sum_sim+=sim.abs().sum()/B
+        prob = discriminator(sentence_emb)
+        pred = prob.argmax(dim=-1)
+        accuracy = (pred == label).sum()/B
+        sum_accuracy += accuracy
+        loss = loss_func(prob, label)
 
         bar.set_description(f"step_loss: {loss.item()}")
         sum_loss += loss.item()
@@ -79,54 +81,35 @@ def train_epoch(
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
-
-        mapped_label = mapped_output(label)
-        mapped_pred = mapped_output(sim)
-        accuracy = (mapped_label == mapped_pred).sum()/B
-        sum_accuracy += accuracy
-    print(f"avg sim: {sum_sim/sum_batches}")
     return sum_loss/sum_batches, sum_accuracy/sum_batches
 
 
 def val_epoch(
     encoder: BaseSentenceEncoder,
-    discriminator: BaseDiscriminator,
+    discriminator: Discriminator,
     dataloader: DataLoader,
 ):
     encoder.eval()
+    loss_func = torch.nn.CrossEntropyLoss()
     sum_loss, sum_batches, sum_accuracy = 0.0, 0.0, 0.0
-    bar = tqdm(dataloader)
-    for sentence1, sentence2, label in bar:
+    for sentence1, sentence2, label in dataloader:
         B = label.shape[0]
-        all_sentences = sentence1+sentence2
-        input_ids, attn_mask = encoder.tokenize(all_sentences)
+        all_prompts = [f"premise: {x}. hypothesis: {y}" for x, y in zip(
+            sentence1, sentence2)]
+        input_ids, attn_mask = encoder.tokenize(all_prompts)
         label = label.to(DEVICE)
         input_ids, attn_mask = input_ids.to(DEVICE), attn_mask.to(DEVICE)
         # sentence_emb: [2B x emb_dim]
-        with torch.no_grad():
-            word_emb, sentence_emb = encoder(input_ids, attn_mask)
-        sim = discriminator.get_similarity(
-            sentence_emb[:B], sentence_emb[B:])  # [B]
-        sim_loss=(sim.abs().sum()/B-0.666).abs()
-        loss = (sim-label).abs().sum()/B+0.4*sim_loss
-        bar.set_description(f"val_step_loss: {loss.item()}")
+        word_emb, sentence_emb = encoder(input_ids, attn_mask)
+        prob = discriminator(sentence_emb)
+        pred = prob.argmax(dim=-1)
+        accuracy = (pred == label).sum()/B
+        sum_accuracy += accuracy
+        loss = loss_func(prob, label)
+
         sum_loss += loss.item()
         sum_batches += 1
-
-        mapped_label = mapped_output(label)
-        mapped_pred = mapped_output(sim)
-        accuracy = (mapped_label == mapped_pred).sum()/B
-        sum_accuracy += accuracy
-
     return sum_loss/sum_batches, sum_accuracy/sum_batches
-
-
-def mapped_output(x: torch.Tensor, margin=0.333):
-    mapped_label = x.detach().clone()
-    mapped_label[mapped_label < -margin] = -1
-    mapped_label[mapped_label > margin] = 1
-    mapped_label[(mapped_label >= -margin) & (mapped_label <= margin)] = 0
-    return mapped_label
 
 
 if __name__ == "__main__":
