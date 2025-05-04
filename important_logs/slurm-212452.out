@@ -1,0 +1,15 @@
+You are using the default legacy behaviour of the <class 'transformers.models.t5.tokenization_t5.T5Tokenizer'>. This is expected, and simply means that the `legacy` (previous) behavior will be used so nothing changes for you. If you want to use the new behaviour, set `legacy=False`. This should only be set if you understand what it means, and thoroughly read the reason why this was added as explained in https://github.com/huggingface/transformers/pull/24565
+  0%|          | 0/8 [00:00<?, ?it/s]Token indices sequence length is longer than the specified maximum sequence length for this model (1008 > 512). Running this sequence through the model will result in indexing errors
+/home/yzhoufv/.conda/envs/rag/lib/python3.12/site-packages/torch/nn/modules/module.py:1739: UserWarning: Implicit dimension choice for softmax has been deprecated. Change the call to include dim=X as an argument.
+  return self._call_impl(*args, **kwargs)
+ 12%|█▎        | 1/8 [00:03<00:24,  3.44s/it] 25%|██▌       | 2/8 [00:07<00:21,  3.62s/it] 38%|███▊      | 3/8 [00:10<00:17,  3.42s/it] 50%|█████     | 4/8 [00:11<00:09,  2.50s/it] 62%|██████▎   | 5/8 [00:13<00:06,  2.21s/it] 75%|███████▌  | 6/8 [00:16<00:05,  2.76s/it] 88%|████████▊ | 7/8 [00:18<00:02,  2.39s/it]100%|██████████| 8/8 [00:19<00:00,  1.83s/it]100%|██████████| 8/8 [00:19<00:00,  2.40s/it]
+ckpt: ckpt/FlanT5Encoder/2025-05-04_01:44:38/encoder-80.pt, ckpt/FlanT5Encoder/2025-05-04_01:44:38/discriminator-80.pt
+use_split_wiki_text: False
+sample_count: [761, 631, 516]
+pred_count: [648, 839, 421]
+true_pred: [318, 256, 267]
+false_pred: [330, 583, 154]
+accuracy: 0.44077568134171907
+precision: [0.49074074074074076, 0.30512514898688914, 0.6342042755344418]
+recall: [0.4178712220762155, 0.40570522979397783, 0.5174418604651163]
+f1: [0.4513839602555004, 0.34829931972789113, 0.5699039487726787]

@@ -10,20 +10,10 @@ class NLIDataset(Dataset):
         filepath_matched: str = "data/dev_matched_sampled-1.jsonl",
         filepath_mismatched: str = "data/dev_mismatched_sampled-1.jsonl"
     ):
-        # I want to use something that is similar to part of our course project (DPR)
-        # labels matched to -1, 0, 1
-        # contradiction => -1
-        # neutral => 0
-        # entailment => 1
-        # then, similarity=dot(encode(sentence1),encode(sentence2))
-        # loss=l2loss(similarity,label)
-        # for samples that doesn't have "gold_label", take the average of annotator labels
         super().__init__()
         self.sentence1 = []
         self.sentence2 = []
         self.label = []
-        self.n_matched_sample = 0
-        self.n_mismatched_sample = 0
         def load_file(f) -> int:
             n_sample=0
             label_map = {"contradiction": 0, "neutral": 1, "entailment": 2}

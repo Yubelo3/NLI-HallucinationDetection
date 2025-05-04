@@ -1,0 +1,14 @@
+You are using the default legacy behaviour of the <class 'transformers.models.t5.tokenization_t5.T5Tokenizer'>. This is expected, and simply means that the `legacy` (previous) behavior will be used so nothing changes for you. If you want to use the new behaviour, set `legacy=False`. This should only be set if you understand what it means, and thoroughly read the reason why this was added as explained in https://github.com/huggingface/transformers/pull/24565
+  0%|          | 0/8 [00:00<?, ?it/s]/home/yzhoufv/.conda/envs/rag/lib/python3.12/site-packages/torch/nn/modules/module.py:1739: UserWarning: Implicit dimension choice for softmax has been deprecated. Change the call to include dim=X as an argument.
+  return self._call_impl(*args, **kwargs)
+ 12%|█▎        | 1/8 [00:04<00:31,  4.53s/it] 25%|██▌       | 2/8 [00:08<00:25,  4.30s/it] 38%|███▊      | 3/8 [00:11<00:18,  3.77s/it] 50%|█████     | 4/8 [00:14<00:13,  3.40s/it] 62%|██████▎   | 5/8 [00:18<00:10,  3.54s/it] 75%|███████▌  | 6/8 [00:24<00:08,  4.47s/it] 88%|████████▊ | 7/8 [00:28<00:04,  4.27s/it]100%|██████████| 8/8 [00:30<00:00,  3.43s/it]100%|██████████| 8/8 [00:30<00:00,  3.78s/it]
+ckpt: ckpt/FlanT5Encoder/2025-05-04_01:44:38/encoder-80.pt, ckpt/FlanT5Encoder/2025-05-04_01:44:38/discriminator-80.pt
+use_split_wiki_text: True
+sample_count: [761, 631, 516]
+pred_count: [1097, 587, 224]
+true_pred: [504, 178, 165]
+false_pred: [593, 409, 59]
+accuracy: 0.4439203354297694
+precision: [0.4594348222424795, 0.303236797274276, 0.7366071428571429]
+recall: [0.6622864651773982, 0.2820919175911252, 0.31976744186046513]
+f1: [0.542518837459634, 0.29228243021346473, 0.44594594594594594]

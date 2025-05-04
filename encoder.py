@@ -28,13 +28,17 @@ class GPT2Encoder(BaseSentenceEncoder):
             param.requires_grad = True
 
     def tokenize(self, sentences: str):
-        tokenized = self.tokenizer(sentences, return_tensors="pt",padding=True)
+        tokenized = self.tokenizer(sentences, return_tensors="pt",padding=True,max_length=1024,truncation=True)
         return tokenized["input_ids"], tokenized["attention_mask"]
 
     def forward(self, input_ids, attention_mask):
         word_emb: torch.Tensor = self.model.forward(
             input_ids=input_ids, attention_mask=attention_mask)["last_hidden_state"]  # [B x L x emb_dim]
-        sentence_emb = (word_emb*attention_mask.unsqueeze(dim=-1)).sum(dim=-2)
+        # Because GPT2 is not bidirectional
+        # I'll take last word embedding as sentence embedding
+        last_token_mask=attention_mask.clone()
+        last_token_mask[:,:-1]-=last_token_mask[:,1:]
+        sentence_emb = (word_emb*last_token_mask.unsqueeze(dim=-1)).sum(dim=-2)
         return word_emb, sentence_emb
 
 
@@ -52,12 +56,13 @@ class FlanT5Encoder(BaseSentenceEncoder):
             param.requires_grad = True
 
     def tokenize(self, sentences: str):
-        tokenized = self.tokenizer(sentences, return_tensors="pt",padding=True)
+        tokenized = self.tokenizer(sentences, return_tensors="pt",padding=True,max_length=1024,truncation=True)
         return tokenized["input_ids"], tokenized["attention_mask"]
 
     def forward(self, input_ids, attention_mask):
         word_emb: torch.Tensor = self.model.forward(
             input_ids=input_ids, attention_mask=attention_mask)["last_hidden_state"]  # [B x L x emb_dim]
+        # Take pooled word embedding as sentence embedding
         sentence_emb = (word_emb*attention_mask.unsqueeze(dim=-1)).sum(dim=-2)
         return word_emb, sentence_emb
 
@@ -68,8 +73,8 @@ if __name__ == "__main__":
     word_emb, sentence_emb = encoder(input_ids, attn_mask)
     print(word_emb.shape)
     print(sentence_emb.shape)
-    encoder=FlanT5Encoder()
-    input_ids, attn_mask = encoder.tokenize(["I am CSE student"])
-    word_emb, sentence_emb = encoder(input_ids, attn_mask)
-    print(word_emb.shape)
-    print(sentence_emb.shape)
+    # encoder=FlanT5Encoder()
+    # input_ids, attn_mask = encoder.tokenize(["I am CSE student"])
+    # word_emb, sentence_emb = encoder(input_ids, attn_mask)
+    # print(word_emb.shape)
+    # print(sentence_emb.shape)

@@ -1,0 +1,13 @@
+  0%|          | 0/8 [00:00<?, ?it/s]/home/yzhoufv/.conda/envs/rag/lib/python3.12/site-packages/torch/nn/modules/module.py:1739: UserWarning: Implicit dimension choice for softmax has been deprecated. Change the call to include dim=X as an argument.
+  return self._call_impl(*args, **kwargs)
+ 12%|█▎        | 1/8 [00:02<00:14,  2.07s/it] 25%|██▌       | 2/8 [00:03<00:11,  1.96s/it] 38%|███▊      | 3/8 [00:05<00:09,  1.90s/it] 50%|█████     | 4/8 [00:06<00:06,  1.54s/it] 62%|██████▎   | 5/8 [00:08<00:04,  1.49s/it] 75%|███████▌  | 6/8 [00:10<00:03,  1.62s/it] 88%|████████▊ | 7/8 [00:11<00:01,  1.55s/it]100%|██████████| 8/8 [00:12<00:00,  1.24s/it]100%|██████████| 8/8 [00:12<00:00,  1.50s/it]
+ckpt: ckpt/GPT2Encoder/2025-05-04_02:27:25/encoder-120.pt, ckpt/GPT2Encoder/2025-05-04_02:27:25/discriminator-120.pt
+use_split_wiki_text: False
+sample_count: [761, 631, 516]
+pred_count: [446, 1201, 261]
+true_pred: [218, 409, 114]
+false_pred: [228, 792, 147]
+accuracy: 0.38836477987421386
+precision: [0.48878923766816146, 0.3405495420482931, 0.4367816091954023]
+recall: [0.2864651773981603, 0.6481774960380349, 0.22093023255813954]
+f1: [0.3612261806130903, 0.44650655021834057, 0.29343629343629346]

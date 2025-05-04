@@ -2,5 +2,5 @@ __pycache__
 ckpt/*
 logs/*
 *.pdf
-*.out
+./*.out
 ss

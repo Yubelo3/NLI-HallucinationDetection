@@ -9,7 +9,7 @@ from tqdm import tqdm
 
 
 DEVICE = "cuda"
-ENCODER = FlanT5Encoder()
+ENCODER = GPT2Encoder()
 TRAIN_RATIO = 0.7
 VAL_RATIO = 0.2
 BATCH_SIZE = 256
@@ -66,7 +66,7 @@ def train_epoch(
         input_ids, attn_mask = encoder.tokenize(all_prompts)
         label = label.to(DEVICE)
         input_ids, attn_mask = input_ids.to(DEVICE), attn_mask.to(DEVICE)
-        # sentence_emb: [2B x emb_dim]
+        # sentence_emb: [B x emb_dim]
         word_emb, sentence_emb = encoder(input_ids, attn_mask)
         prob = discriminator(sentence_emb)
         pred = prob.argmax(dim=-1)
@@ -99,9 +99,10 @@ def val_epoch(
         input_ids, attn_mask = encoder.tokenize(all_prompts)
         label = label.to(DEVICE)
         input_ids, attn_mask = input_ids.to(DEVICE), attn_mask.to(DEVICE)
-        # sentence_emb: [2B x emb_dim]
-        word_emb, sentence_emb = encoder(input_ids, attn_mask)
-        prob = discriminator(sentence_emb)
+        # sentence_emb: [B x emb_dim]
+        with torch.no_grad():
+            word_emb, sentence_emb = encoder(input_ids, attn_mask)
+            prob = discriminator(sentence_emb)
         pred = prob.argmax(dim=-1)
         accuracy = (pred == label).sum()/B
         sum_accuracy += accuracy
