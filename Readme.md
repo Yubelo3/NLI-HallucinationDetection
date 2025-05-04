@@ -33,6 +33,18 @@ Finetuned **Flan-T5** achieved around 83% accuracy on validation set, while **GP
 ![](imgs/2.png)  
 ![](imgs/3.png)
 
+### Case Study  
+
+I'll show some examples for generated probability distribution on different premise-hypothesis pairs, with the tuned **Flan-T5** model.    
+
+|Premise|Hypothesis|p{Contradiction}|p{Neutral}|p{Entailment}|
+|-|-|-|-|-|  
+|I am new here|I am not familiar with here|0.0123|0.0123|0.9754|
+|I have a class tonight|I am free tonight|0.8894|0.0390|0.0716|
+|I have a job|I am free tonight|0.5826|0.3283|0.0891|
+
+As shown above, the tuned **Flan-T5** is able to generate predictions that are quite close to human intuition.  
+
 ## 2.2 NLI for hallucination detection: Method  
 
 ### Models  
@@ -57,5 +69,4 @@ Both way gives similar accuracy.
 Unfortunatly the performance is a disaster  
 
 ![](imgs/4.png)  
-
 
