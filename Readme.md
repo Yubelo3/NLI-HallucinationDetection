@@ -30,6 +30,8 @@ Both **GPT2** and **Flan-T5** can be stably finetuned, but **GPT2** encoder suff
 
 Finetuned **Flan-T5** achieved around 83% accuracy on validation set, while **GPT2** only get about 58%.  
 
+You can run `python finetune.py` to tune the model yourself. You can adjust settings in `finetune.py`.  
+
 ![](imgs/2.png)  
 ![](imgs/3.png)
 
@@ -44,7 +46,7 @@ I'll show some examples for generated probability distribution on different prem
 |I have a job|I am free tonight|0.5826|0.3283|0.0891|
 |I have an easy job|I am free tonight|0.1873|0.7309|0.0819|
 
-As shown above, the tuned **Flan-T5** is able to generate predictions that are quite close to human intuition.  
+As shown above, the tuned **Flan-T5** is able to generate predictions that are quite close to human intuition. You can run `python case_study.py` to confirm the result.   
 
 ## 2.2 NLI for hallucination detection: Method  
 
@@ -71,3 +73,4 @@ Unfortunatly the performance is a disaster
 
 ![](imgs/4.png)  
 
+You can run `python hallucination_detection.py` to confirm that result.  

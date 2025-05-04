@@ -29,8 +29,9 @@ def main():
         premise, hypothesis)]
     input_ids, attn_mask = encoder.tokenize(all_prompts)
     input_ids, attn_mask = input_ids.to(DEVICE), attn_mask.to(DEVICE)
-    word_emb, sentence_emb = encoder(input_ids, attn_mask)
-    prob = discriminator(sentence_emb)
+    with torch.no_grad():
+        word_emb, sentence_emb = encoder(input_ids, attn_mask)
+        prob = discriminator(sentence_emb)
     print(prob)
 
 
