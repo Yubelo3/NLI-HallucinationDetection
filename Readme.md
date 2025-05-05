@@ -74,3 +74,8 @@ Unfortunatly the performance is a disaster
 ![](imgs/4.png)  
 
 You can run `python hallucination_detection.py` to confirm that result.  
+
+## References  
+
+The pretrained [GPT2 model](https://huggingface.co/openai-community/gpt2) and [Flan-T5 model](https://huggingface.co/google/flan-t5-base) can be found on [huggingface](https://huggingface.co).  
+
